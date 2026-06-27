@@ -3,7 +3,6 @@ import { cn } from '@/lib/utils'
 interface Props {
   children: React.ReactNode
   className?: string
-  /** Sub-pages (Upgrade, OAuth) sit under Telegram's native BackButton — no tab bar padding needed */
   subPage?: boolean
 }
 
@@ -12,16 +11,21 @@ export function PageShell({ children, className, subPage }: Props) {
     <div
       className={cn(
         'flex flex-col h-full overflow-y-auto overflow-x-hidden',
-        // Safe area at top — keeps content below Telegram's fullscreen header
-        'pt-[var(--safe-area-top)]',
-        // Tab pages need bottom room for the floating nav pill
         !subPage && 'pb-nav',
         className
       )}
-      // Prevent scroll chaining into Telegram's native scroll — avoids swipe-to-close
-      style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
+      style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' as never }}
     >
-      <div className="px-3 pt-2 flex-1">{children}</div>
+      {/*
+        Top safe area spacer — fills the space behind Telegram's
+        fullscreen status bar / notch. Height comes from JS via
+        --safe-area-top CSS var set in useTelegramInit().
+      */}
+      <div style={{ height: 'var(--safe-area-top)', flexShrink: 0 }} aria-hidden />
+
+      <div className="px-3 pt-2 flex-1">
+        {children}
+      </div>
     </div>
   )
 }

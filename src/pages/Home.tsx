@@ -12,7 +12,7 @@ import { tierLabel } from '@/lib/utils'
 
 export function Home() {
   const { firstName } = useAuthStore()
-  const { messagesDailyLimit, messagesUsedToday } = useSessionStore()
+  const { messagesDailyLimit, messagesUsedToday, summaryCount } = useSessionStore()
   const tier = useAuthStore((s) => s.tier)
 
   const greeting = (() => {
@@ -24,52 +24,70 @@ export function Home() {
 
   return (
     <PageShell>
-      {/* Greeting */}
-      <div className="flex items-center justify-between mb-3 pt-1">
+      {/* Greeting row */}
+      <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="text-[11px] text-[var(--color-text-muted)]">{greeting}</p>
-          <p className="text-[16px] font-medium text-[var(--color-text-primary)]">
+          <p className="text-[12px] text-[var(--color-text-muted)] leading-none mb-1">
+            {greeting}
+          </p>
+          <p className="text-[22px] font-medium text-[var(--color-text-primary)] leading-none">
             {firstName ?? 'there'}
           </p>
         </div>
         <span
-          className="text-[10px] px-2.5 py-1 rounded-full border"
+          className="text-[11px] font-medium px-3 py-1.5 rounded-full border"
           style={
             tier === 'free'
-              ? { background: 'rgba(255,255,255,0.06)', color: 'var(--color-text-muted)', borderColor: 'rgba(255,255,255,0.1)' }
+              ? {
+                  background: 'rgba(255,255,255,0.06)',
+                  color: 'var(--color-text-muted)',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                }
               : tier === 'pro'
-              ? { background: 'var(--color-accent-dim)', color: 'var(--color-accent)', borderColor: 'var(--color-accent-border)' }
-              : { background: 'var(--color-warning-dim)', color: 'var(--color-warning)', borderColor: 'rgba(255,159,10,0.28)' }
+              ? {
+                  background: 'var(--color-accent-dim)',
+                  color: 'var(--color-accent)',
+                  borderColor: 'var(--color-accent-border)',
+                }
+              : {
+                  background: 'var(--color-warning-dim)',
+                  color: 'var(--color-warning)',
+                  borderColor: 'rgba(255,159,10,0.28)',
+                }
           }
         >
           {tierLabel(tier)}
         </span>
       </div>
 
+      {/* Upgrade banner — free tier only */}
       <UpgradeBanner />
+
+      {/* Last message from bot */}
       <LastMessageCard />
+
+      {/* Usage stats */}
       <UsageStats />
+
+      {/* Quick actions */}
       <QuickActions />
 
-      {/* Quick links */}
-      <GlassCard className="mb-2">
+      {/* Quick nav links */}
+      <GlassCard className="mb-3">
         <GlassCell
-          icon={<Brain size={14} className="text-[var(--color-success)]" aria-hidden />}
+          icon={<Brain size={15} className="text-[var(--color-success)]" aria-hidden />}
           title="Memory"
-          subtitle={`${useSessionStore.getState().summaryCount} summaries stored`}
+          subtitle={`${summaryCount} summaries stored`}
           chevron
         />
         <GlassCell
-          icon={<BarChart2 size={14} className="text-[var(--color-warning)]" aria-hidden />}
+          icon={<BarChart2 size={15} className="text-[var(--color-warning)]" aria-hidden />}
           title="Daily usage"
           subtitle={`${messagesUsedToday} / ${messagesDailyLimit} messages`}
           right={
-            <div
-              className="w-10 h-[3px] rounded-full bg-white/10 overflow-hidden"
-              aria-hidden
-            >
+            <div className="w-12 h-[3px] rounded-full bg-white/10 overflow-hidden" aria-hidden>
               <div
-                className="h-full rounded-full"
+                className="h-full rounded-full transition-all duration-500"
                 style={{
                   width: `${Math.min(100, (messagesUsedToday / messagesDailyLimit) * 100)}%`,
                   background: 'var(--color-warning)',
