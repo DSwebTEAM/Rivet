@@ -24,25 +24,34 @@
     --color-text-secondary: rgba(200, 200, 215, 0.80);
     --color-text-muted: rgba(155, 155, 175, 0.65);
 
-    /* Safe area — overridden by JS from Telegram SDK on init */
+    /* Set to 0 by default — JS overrides with real values from Telegram SDK */
     --safe-area-top: 0px;
     --safe-area-bottom: 0px;
   }
 
-  html, body, #root {
-    height: 100%;
-    /* Prevent rubber-band scroll / pull-to-close in Telegram webview */
-    overscroll-behavior: none;
+  /*
+    Use Telegram's stable viewport height so scroll works correctly.
+    --tg-viewport-stable-height is set automatically by telegram-web-app.js.
+    Fallback to 100dvh (dynamic viewport height) for outside Telegram.
+  */
+  html {
+    height: var(--tg-viewport-stable-height, 100dvh);
   }
 
   body {
+    height: 100%;
     background-color: var(--color-bg);
     color: var(--color-text-primary);
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     color-scheme: dark;
-    /* Fill any notch/status bar area with bg color */
-    background-attachment: fixed;
+    overscroll-behavior: none;
+  }
+
+  #root {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   * {
@@ -52,18 +61,14 @@
 }
 
 @layer utilities {
-  /* Safe area padding utilities */
-  .safe-top  { padding-top: var(--safe-area-top); }
-  .safe-bottom { padding-bottom: var(--safe-area-bottom); }
-
-  /* Tab page scroll — clears floating nav + safe area */
+  /* Tab page scroll — clears floating nav + bottom safe area */
   .pb-nav {
-    padding-bottom: calc(82px + var(--safe-area-bottom));
+    padding-bottom: calc(88px + var(--safe-area-bottom));
   }
 
   /*
     Liquid Glass card surface.
-    WebKit prefix required for Telegram's embedded WebKit webview.
+    Both -webkit- and unprefixed needed for Telegram's WebKit webview.
   */
   .glass {
     background: var(--color-surface);

@@ -12,7 +12,6 @@ import { useAuthStore } from '@/store/authStore'
 import { useTelegramInit } from '@/hooks/useTelegram'
 import { useUser } from '@/hooks/useUser'
 
-// Sub-pages that suppress the floating tab bar
 const SUB_PAGES = ['/upgrade', '/oauth/callback']
 
 function TabRouter() {
@@ -49,13 +48,16 @@ export default function App() {
 
   if (!isReady) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div
+        className="flex items-center justify-center"
+        style={{
+          height: 'var(--tg-viewport-stable-height, 100dvh)',
+          background: 'var(--color-bg)',
+        }}
+      >
         <div
           className="w-6 h-6 rounded-full border-2 animate-spin"
-          style={{
-            borderColor: 'var(--color-accent)',
-            borderTopColor: 'transparent',
-          }}
+          style={{ borderColor: 'var(--color-accent)', borderTopColor: 'transparent' }}
           role="status"
           aria-label="Loading"
         />
@@ -64,7 +66,15 @@ export default function App() {
   }
 
   return (
-    <div className="relative h-full overflow-hidden bg-[var(--color-bg)]">
+    /*
+      Key layout fix: use flex-col + flex-1 instead of h-full overflow-hidden.
+      overflow-hidden was preventing scroll in Telegram's webview.
+      The actual scroll happens inside PageShell which has overflow-y-auto.
+    */
+    <div
+      className="relative flex flex-col bg-[var(--color-bg)]"
+      style={{ height: 'var(--tg-viewport-stable-height, 100dvh)' }}
+    >
       <TabRouter />
 
       <AnimatePresence mode="wait">
@@ -74,14 +84,14 @@ export default function App() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.15, ease: 'easeOut' }}
-          className="h-full"
+          className="flex-1 min-h-0" // min-h-0 allows flex child to scroll properly
         >
           <Routes location={location}>
-            <Route path="/"                  element={<Home />} />
-            <Route path="/space"             element={<Space />} />
-            <Route path="/settings"          element={<Settings />} />
-            <Route path="/upgrade"           element={<Upgrade />} />
-            <Route path="/oauth/callback"    element={<ConnectorOAuth />} />
+            <Route path="/"               element={<Home />} />
+            <Route path="/space"          element={<Space />} />
+            <Route path="/settings"       element={<Settings />} />
+            <Route path="/upgrade"        element={<Upgrade />} />
+            <Route path="/oauth/callback" element={<ConnectorOAuth />} />
           </Routes>
         </motion.div>
       </AnimatePresence>
