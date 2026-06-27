@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /*
+    Design tokens — dark mode (default, Telegram uses dark)
+    These map to Telegram's themeParams at runtime via useTelegram hook.
+    Fallback values here are used during dev outside Telegram.
+  */
+  :root {
+    --color-bg: #0e0e10;
+    --color-surface: rgba(255, 255, 255, 0.05);
+    --color-surface-raised: rgba(255, 255, 255, 0.08);
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-border-subtle: rgba(255, 255, 255, 0.05);
+
+    --color-accent: #3b8ce8;
+    --color-accent-dim: rgba(59, 140, 232, 0.12);
+    --color-accent-border: rgba(59, 140, 232, 0.28);
+
+    --color-success: #34c759;
+    --color-success-dim: rgba(52, 199, 89, 0.12);
+    --color-warning: #ff9f0a;
+    --color-warning-dim: rgba(255, 159, 10, 0.12);
+    --color-destructive: #f04444;
+
+    --color-text-primary: #f0f0f3;
+    --color-text-secondary: rgba(200, 200, 215, 0.8);
+    --color-text-muted: rgba(155, 155, 175, 0.65);
+
+    /* Safe area insets — overridden by JS from Telegram SDK */
+    --safe-area-top: 44px;
+    --safe-area-bottom: 20px;
+
+    /*
+      Override TG-UI's default accent to match our steel blue.
+      TG-UI reads --tgui--link_color and --tgui--button_color for its Switch etc.
+    */
+    --tgui--link_color: #3b8ce8;
+    --tgui--button_color: #3b8ce8;
+    --tgui--button_text_color: #ffffff;
+  }
+
+  /* Light mode fallback (outside Telegram) */
+  html:not(.dark) {
+    --color-bg: #f2f2f7;
+    --color-surface: rgba(255, 255, 255, 0.8);
+    --color-surface-raised: rgba(255, 255, 255, 0.95);
+    --color-border: rgba(0, 0, 0, 0.08);
+    --color-border-subtle: rgba(0, 0, 0, 0.05);
+
+    --color-accent: #0a7ae8;
+    --color-accent-dim: rgba(10, 122, 232, 0.1);
+    --color-accent-border: rgba(10, 122, 232, 0.25);
+
+    --color-success: #1cb347;
+    --color-success-dim: rgba(28, 179, 71, 0.1);
+    --color-warning: #d4840a;
+    --color-warning-dim: rgba(212, 132, 10, 0.1);
+
+    --color-text-primary: #0e0e10;
+    --color-text-secondary: rgba(40, 40, 60, 0.75);
+    --color-text-muted: rgba(80, 80, 100, 0.6);
+
+    --tgui--link_color: #0a7ae8;
+    --tgui--button_color: #0a7ae8;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    overscroll-behavior: none;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color-scheme: dark;
+  }
+
+  html:not(.dark) body {
+    color-scheme: light;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /*
+    Neutralise TG-UI's AppRoot body background so our --color-bg wins.
+    TG-UI sets a `background` on the root element which would fight our tokens.
+  */
+  [class*='tgui-root'],
+  [class*='tgui-app-root'] {
+    background: transparent !important;
+    height: 100%;
+  }
+}
+
+@layer utilities {
+  .safe-top {
+    padding-top: var(--safe-area-top);
+  }
+  .safe-bottom {
+    padding-bottom: var(--safe-area-bottom);
+  }
+  .pb-nav {
+    /* Scroll content clears the floating nav + safe area */
+    padding-bottom: calc(80px + var(--safe-area-bottom));
+  }
+
+  /* Liquid glass card — the core surface style */
+  .glass {
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: 16px;
+  }
+
+  .glass-raised {
+    background: var(--color-surface-raised);
+    border: 0.5px solid var(--color-border);
+    border-radius: 16px;
+  }
+}

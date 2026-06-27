@@ -1,0 +1,22 @@
+# Cloudflare Pages configuration
+# Docs: https://developers.cloudflare.com/pages/functions/wrangler-configuration/
+
+name = "rivet-console"
+pages_build_output_dir = "dist"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Environment variables are set in the Cloudflare Pages dashboard:
+# Dashboard → Pages → rivet-console → Settings → Environment variables
+#
+# Required variables (add these in the dashboard for both Production and Preview):
+#
+#   VITE_SUPABASE_URL        — e.g. https://xxxx.supabase.co
+#   VITE_SUPABASE_ANON_KEY   — your Supabase project's anon/public key
+#   VITE_RIVET_API_URL       — your Replit backend URL, e.g. https://rivet-core.username.repl.co
+#   VITE_BOT_USERNAME        — your Telegram bot username WITHOUT @, e.g. RivetAIBot
+#
+# DO NOT put real values here — this file is committed to git.
+# Cloudflare Pages injects VITE_* vars into the build at deploy time.
+
+# Local dev: copy .env.example → .env.local and fill in values there.
